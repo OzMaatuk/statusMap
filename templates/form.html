@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Update Location Status</title>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      margin: 0 auto;
+      width: 500px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+    }
+
+    input[type="submit"] {
+      background-color: #000;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Update Location Status</h1>
+
+  <form action="/update" method="POST" enctype="application/json">
+    <label for="address">Address</label>
+    <input type="text" name="address" id="address" placeholder="Address">
+
+    <label for="electricity">Electricity Available</label>
+    <input type="checkbox" name="electricity" id="electricity" checked>
+
+    <label for="water">Water Supply Available</label>
+    <input type="checkbox" name="water" id="water" checked>
+
+    <label for="terrorist">Terrorist Attack</label>
+    <input type="checkbox" name="terrorist" id="terrorist">
+
+    <label for="missile">Missile Hit</label>
+    <input type="checkbox" name="missile" id="missile">
+
+    <input type="submit" value="Update">
+  </form>
+</body>
+</html>

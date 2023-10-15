@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add live realtime data</title>
+    <meta property="og:description" content="Use realtime GeoJSON data streams to move a symbol on your map." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@3.5.0/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@3.5.0/dist/maplibre-gl.js'></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+
+<script>
+    const map = new maplibregl.Map({
+        container: 'map',
+        style:
+            'https://api.maptiler.com/maps/streets/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL',
+        zoom: 8,
+        center: [34.8122, 32.0821]
+    });
+
+    map.on('load', () => {
+        window.setInterval(() => {
+            // Make every 2000 milliseconds
+            fetch('http://localhost:5000/get_events')
+                .then(r => r.json())
+                .then(json => {
+                    json.forEach(element => {
+                        // Set/Update icon on map
+                        var sourceData = {
+                            type: 'geojson',
+                            data: {
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: [element.lat, element.lon]
+                                }
+                            }
+                        }
+                        var mapSource = map.getSource(element.address);
+                        if(typeof mapSource !== 'undefined') {
+                            // Remove map layer & source.
+                            map.removeLayer(element.address).removeSource(element.address)
+                        }
+                        map.addSource(element.address, sourceData);
+
+                        var layerData = {
+                            'id': element.address,
+                            'type': 'symbol',
+                            'source': element.address,
+                            'layout': {
+                                'icon-image': 'rocket_15'
+                            }
+                        }
+                        map.addLayer(layerData);
+
+                        map.on('click', element.address, (e) => {
+                            const description = "Electricity: " + element.electricity_availability
+                                + "\nWater: " + element.water_supply
+                                + "\nTerror: " + element.terrorist_attack
+                                + "\nHit: " + element.missile_hit;
+                            new maplibregl.Popup()
+                                .setLngLat([element.lat, element.lon])
+                                .setHTML(description)
+                                .addTo(map);
+                        });
+                    });
+                })
+        }, 3000);
+
+        map.addControl(new maplibregl.GeolocateControl({
+          positionOptions: {
+              enableHighAccuracy: true
+          },
+          trackUserLocation: true
+        }));
+    });
+</script>
+</body>
+</html>
