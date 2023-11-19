@@ -1,33 +1,45 @@
 ## Location Status Update
 
 ### Overview
-
 This project is a simple web application that allows users to update the status of locations, such as whether they have electricity, water, or have been hit by a missile. The application uses a MongoDB database to store the location status data.
 
 ### Dependencies
-
 * Python 3.6 or higher
 * Flask
-* MongoDB
+* MongoDB (bson included)
 * Maplibre GL
 
 ### Usage
-
 1. Install the dependencies:
 
-pip install flask pymongo maplibregl
+    pip install flask pymongo python-dotenv
 
-2. Start the MongoDB database:
+2. Place you maptiler key in the .env file.
 
-mongod
+3. Start the MongoDB database:
 
-3. Run the Flask application:
+    mongod
 
-python server.py
+4. Run the Flask application:
 
-4. Open a web browser and navigate to http://localhost:5000/map to view the map.
+    python server.py
 
-5. To update the status of a location, navigate to http://localhost:5000/form, fill details, and click the "Update" button.
+5. Open a web browser and navigate to http://localhost:5000/map to view the map.
+
+6. To update the status of a location, navigate to http://localhost:5000/form, fill details, and click the "Update" button.
+
+### Containers
+1. In the .env file, set the 'MONGODB_CONTAINER_NAME' variable with the MongoDB container name ('statusmap-mongodb').
+
+2. Make sure that you have docker installed and execute the following commands:
+
+        docker network create statusmapnet
+
+        docker build -t statusmap-flask .
+
+        docker run -d --network statusmapnet -p 27017:27017 --name statusmap-mongodb mongo
+
+        docker run -d --network statusmapnet -p 5000:5000 --name statusmap statusmap-flask
 
 ### Example
 To update the status of a location, click the "Update" button and fill out the form. For example, to update the status of the location "123 Main Street", you would enter the following information into the form:

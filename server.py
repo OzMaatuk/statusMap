@@ -1,10 +1,15 @@
 # import logging
 import pymongo
 from flask import Flask, jsonify, request, render_template
+from dotenv import load_dotenv
+from os import getenv
 import utils
+load_dotenv()
 
 # Connect to the MongoDB database
-client = pymongo.MongoClient('localhost', 27017)
+host = getenv("MONGODB_CONTAINER_NAME" ,"localhost")
+api_key = getenv("MAPTILER_KEY" ,"")
+client = pymongo.MongoClient(host, 27017)
 db = client['events_database']
 
 app = Flask(__name__)
@@ -15,7 +20,7 @@ app = Flask(__name__)
 # Get the map screen
 @app.route('/map')
 def map():
-    return render_template('map.html')
+    return render_template('map.html', api_key=api_key)
 
 # Get data from db
 @app.route('/get_events', methods=['GET'])
@@ -45,4 +50,4 @@ def update():
     return utils.update_location_status(address, electricity_availability, water_supply, terrorist_attack, missile_hit)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
